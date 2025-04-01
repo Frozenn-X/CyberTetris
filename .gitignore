@@ -1,6 +1,9 @@
 # Dependency directories
 node_modules/
 jspm_packages/
+*_config.md
+*_state.md
+package-lock.json
 
 # Build outputs
 dist/
@@ -44,9 +47,7 @@ coverage/
 tmp/
 temp/
 
-# Project specific
-*_config.md
-*_state.md
+
 # ignore build folder
 build/
 
