@@ -1,0 +1,140 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  max-height: 100vh;
+  padding: 0.25rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.title-container {
+  position: relative;
+  margin-bottom: 0.25rem;
+  padding: 0.15rem 1rem;
+  overflow: visible;
+  z-index: 5;
+  height: auto;
+  min-height: 40px;
+}
+
+.title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 5;
+  line-height: 1;
+}
+
+.title-part {
+  color: #00f7ff;
+  text-shadow: 
+    0 0 5px #00f7ff,
+    0 0 10px rgba(0, 247, 255, 0.7);
+  position: relative;
+}
+
+.title-part.highlight {
+  color: #ff00ff;
+  text-shadow: 
+    0 0 5px #ff00ff,
+    0 0 10px rgba(255, 0, 255, 0.7);
+  animation: neon-pulse 2s infinite alternate;
+}
+
+.title-part::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0.5rem;
+  color: transparent;
+  background: linear-gradient(to right, rgba(0, 247, 255, 0.4), rgba(255, 0, 255, 0.4));
+  background-clip: text;
+  -webkit-background-clip: text;
+  transform: skewX(-15deg);
+  filter: blur(10px);
+  opacity: 0;
+  animation: glitch 5s infinite;
+}
+
+.title-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 0, 255, 0.1) 0%,
+    rgba(0, 255, 255, 0.1) 50%,
+    transparent 70%
+  );
+  filter: blur(20px);
+  z-index: 0;
+  transform: translateY(30%);
+  opacity: 0.7;
+}
+
+/* Glitch effect animation */
+@keyframes glitch {
+  0%, 100% {
+    opacity: 0;
+    transform: skewX(-15deg) translateX(0);
+  }
+  10%, 15% {
+    opacity: 0.3;
+    transform: skewX(-15deg) translateX(5px);
+  }
+  12% {
+    opacity: 0.5;
+    transform: skewX(-15deg) translateX(-5px);
+  }
+}
+
+@keyframes neon-pulse {
+  0% {
+    text-shadow: 
+      0 0 5px #ff00ff,
+      0 0 10px rgba(255, 0, 255, 0.7);
+  }
+  100% {
+    text-shadow: 
+      0 0 10px #ff00ff,
+      0 0 20px rgba(255, 0, 255, 0.7),
+      0 0 30px rgba(255, 0, 255, 0.5);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-height: 700px) {
+  .title-container {
+    margin-bottom: 0.25rem;
+    padding: 0.1rem 1rem;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.25rem;
+    flex-direction: row;
+    gap: 0.25rem;
+  }
+} 
