@@ -1,77 +1,59 @@
-# CyberTetris
+# 🎮 CyberTetris
 
 A modern web-based implementation of the classic Tetris game with a cyberpunk aesthetic.
 
-[![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=flat&logo=react&logoColor=white)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0.2-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Redux](https://img.shields.io/badge/Redux_Toolkit-Latest-764ABC?style=flat&logo=redux&logoColor=white)](https://redux-toolkit.js.org/)
-[![Vite](https://img.shields.io/badge/Vite-4.4.5-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![ESLint](https://img.shields.io/badge/ESLint-8.45.0-4B32C3?style=flat&logo=eslint&logoColor=white)](https://eslint.org/)
+<div align="center">
+  <a href="https://cybertetris.trauchessec.fr/" target="_blank">
+    <img src="https://img.shields.io/badge/▶️_PLAY_NOW-CyberTetris-88C0D0?style=for-the-badge&logoColor=white" alt="Play CyberTetris" width="250px">
+  </a>
+  
+  <p>
+    <a href="https://reactjs.org/">
+      <img src="https://img.shields.io/badge/React-18.2.0-61DAFB?style=flat&logo=react&logoColor=white" alt="React" />
+    </a>
+    <a href="https://www.typescriptlang.org/">
+      <img src="https://img.shields.io/badge/TypeScript-5.0.2-3178C6?style=flat&logo=typescript&logoColor=white" alt="TypeScript" />
+    </a>
+    <a href="https://redux-toolkit.js.org/">
+      <img src="https://img.shields.io/badge/Redux_Toolkit-Latest-764ABC?style=flat&logo=redux&logoColor=white" alt="Redux Toolkit" />
+    </a>
+    <a href="https://vitejs.dev/">
+      <img src="https://img.shields.io/badge/Vite-4.4.5-646CFF?style=flat&logo=vite&logoColor=white" alt="Vite" />
+    </a>
+  </p>
 
-## Features
+  <img src="./screenshot_preview.png" alt="CyberTetris Game Screenshot" width="80%">
+</div>
 
-- Classic Tetris gameplay mechanics with modern enhancements
-- Responsive, cyberpunk-themed UI
-- High score tracking and leaderboard
-- Customizable controls
-- Performance optimized with Redux Toolkit for state management
-- Web Workers for game logic calculations (planned)
+## ✨ Features
 
-## Tech Stack
+- Classic Tetris gameplay mechanics with modern cyberpunk aesthetic
+- Responsive design for desktop and mobile play
+- High score tracking
+- Performance optimized with Redux Toolkit
+
+## 🛠️ Tech Stack
 
 - **Frontend:** React, TypeScript, CSS Modules
 - **State Management:** Redux Toolkit
-- **Build & Development:** Vite
-- **Testing:** Jest (configured)
-- **Linting/Formatting:** ESLint, Prettier
-- **Performance:** (planned)
-  - React.memo for component optimization
-  - Web Workers for game logic
+- **Build:** Vite
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js (v16+)
-- npm or yarn
-
-### Installation
+## 🏁 Getting Started
 
 ```bash
-# Clone the repository
+# Clone and install
 git clone <your-repo-url>
 cd CyberTetris
-
-# Install dependencies
 npm install
-# or
-yarn install
-```
 
-### Development
-
-```bash
-# Start development server
+# Development
 npm run dev
-# or
-yarn dev
-```
 
-### Building for Production
-
-```bash
-# Build for production
+# Production build
 npm run build
-# or
-yarn build
-
-# Preview production build
-npm run preview
-# or
-yarn preview
 ```
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 CyberTetris/
@@ -79,15 +61,12 @@ CyberTetris/
 │   ├── components/       # UI components
 │   ├── constants/        # Game constants like tetrominos
 │   ├── hooks/            # Custom React hooks
-│   ├── store/            # Redux store configuration
-│   │   ├── slices/       # Redux Toolkit slices
+│   ├── store/            # Redux store and slices
 │   ├── types/            # TypeScript type definitions
 │   ├── App.tsx           # Main application component
 │   └── main.tsx          # Application entry point
-├── public/               # Static assets
-└── ...config files
 ```
 
-## License
+## 📜 License
 
 MIT 

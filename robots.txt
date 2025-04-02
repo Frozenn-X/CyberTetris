@@ -1,0 +1,45 @@
+# robots.txt for CyberTetris
+# https://cybertetris.trauchessec.fr/
+
+# Allow all web crawlers to access the entire site (good for SEO)
+User-agent: *
+Allow: /
+
+# Specify the sitemap location (if you have one in the future)
+# Sitemap: https://cybertetris.trauchessec.fr/sitemap.xml
+
+# Prevent crawlers from accessing specific files or directories
+# Disallow: /assets/
+# Disallow: /.env
+# Disallow: /.git/
+# Disallow: /node_modules/
+
+# Crawl delay for specific crawlers (in seconds)
+# This helps prevent server overload from too many requests
+User-agent: Googlebot
+Crawl-delay: 1
+
+User-agent: bingbot
+Crawl-delay: 1
+
+# Block AI training crawlers if you don't want your content used for AI training
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: cohere-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: / 
