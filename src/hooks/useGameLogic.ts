@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import {
@@ -13,8 +13,8 @@ import {
 
 const GRID_WIDTH = 10;
 const GRID_HEIGHT = 20;
-const BASE_SPEED = 1000; // Base speed in milliseconds
-const MIN_SPEED = 100;   // Minimum speed in milliseconds
+const BASE_SPEED = 800; // Base speed in milliseconds - faster start speed (was 1000)
+const MIN_SPEED = 80;   // Minimum speed in milliseconds - allow for slightly faster max speed
 
 // Level thresholds - player will level up when reaching these scores
 const LEVEL_THRESHOLDS = [
@@ -32,17 +32,18 @@ const LEVEL_THRESHOLDS = [
 
 export const useGameLogic = () => {
   const dispatch = useDispatch();
-  const { isPlaying, isPaused, grid, currentPiece, piecePosition, level, score, currentTetromino, nextTetromino } = useSelector(
+  const { isPlaying, isPaused, grid, currentPiece, piecePosition, level, score, nextTetromino } = useSelector(
     (state: RootState) => state.game
   );
   
-  // Calculate game speed based on score instead of level
+  // Calculate game speed based on level
+  // Make speed increase more dramatically with each level
   const calculateGameSpeed = useCallback(() => {
-    // Score-based speed (faster as score increases)
-    // Reduce delay by 40ms for every 250 points - more responsive speed changes
-    const speedReduction = Math.floor(score / 250) * 40;
-    return Math.max(MIN_SPEED, BASE_SPEED - speedReduction);
-  }, [score]);
+    // More aggressive exponential speed reduction
+    // Using 0.65 instead of 0.75 for more dramatic speed increase per level
+    const speedFactor = Math.pow(0.65, level - 1);
+    return Math.max(MIN_SPEED, Math.floor(BASE_SPEED * speedFactor));
+  }, [level]);
 
   // Check if player should level up based on score
   const checkLevelUp = useCallback(() => {
@@ -147,14 +148,21 @@ export const useGameLogic = () => {
 
     // Calculate points based on number of lines cleared
     if (linesCleared > 0) {
-      // Dynamic scoring based on level:
-      // Base score is 60 points per line
-      // Each level increases point value by ~7% (level 2 = 64, level 3 = 68, etc.)
-      const basePointsPerLine = 60;
-      const levelMultiplier = 1 + ((level - 1) * 0.07);
+      // Enhanced scoring system that scales more with level
+      // Base score is now 75 points per line (increased from 55)
+      // Each level adds 15 points per line cleared
+      const basePointsPerLine = 75;
+      const levelBonus = (level - 1) * 15;
       
-      // Calculate total points (rounded to integer)
-      const points = Math.round(linesCleared * basePointsPerLine * levelMultiplier);
+      // Calculate total points based on lines cleared and level
+      let points = linesCleared * (basePointsPerLine + levelBonus);
+      
+      // Bonus points for clearing multiple lines at once
+      // 1 line = 1x, 2 lines = 1.4x, 3 lines = 1.8x, 4 lines = 2.5x
+      const comboMultiplier = [1, 1.4, 1.8, 2.5];
+      if (linesCleared > 1 && linesCleared <= 4) {
+        points = Math.round(points * comboMultiplier[linesCleared - 1]);
+      }
       
       dispatch(updateScore(points));
       
@@ -227,6 +235,73 @@ export const useGameLogic = () => {
     }
   }, [isPlaying, isPaused, checkCollision, currentPiece, dispatch, piecePosition]);
 
+  const hardDrop = useCallback(() => {
+    if (!isPlaying || isPaused) return;
+    
+    // Keep moving down until collision
+    let dropDistance = 0;
+    let newY = piecePosition.y;
+    
+    // Find how far we can drop
+    while (!checkCollision({ x: piecePosition.x, y: newY + 1 }, currentPiece)) {
+      newY++;
+      dropDistance++;
+    }
+    
+    // Only proceed if we actually moved down
+    if (dropDistance > 0) {
+      // Calculate final position after hard drop
+      const finalPosition = { x: piecePosition.x, y: newY };
+      dispatch(movePiece(finalPosition));
+      
+      // Create new grid and merge piece using optimized array operations
+      const newGrid = grid.map(row => [...row]);
+      const pieceHeight = currentPiece.length;
+      const pieceWidth = currentPiece[0].length;
+      
+      // Pre-calculate grid boundaries for faster checks
+      const maxY = Math.min(finalPosition.y + pieceHeight, GRID_HEIGHT);
+      const maxX = Math.min(finalPosition.x + pieceWidth, GRID_WIDTH);
+      const startY = Math.max(finalPosition.y, 0);
+      const startX = Math.max(finalPosition.x, 0);
+      
+      // Optimized piece merging with boundary checks
+      for (let y = startY; y < maxY; y++) {
+        const pieceY = y - finalPosition.y;
+        for (let x = startX; x < maxX; x++) {
+          if (pieceY >= 0 && pieceY < pieceHeight && 
+              x - finalPosition.x >= 0 && x - finalPosition.x < pieceWidth && 
+              currentPiece[pieceY][x - finalPosition.x]) {
+            newGrid[y][x] = 1;
+          }
+        }
+      }
+      
+      // Clear lines with our custom grid
+      const clearedGrid = clearLines(newGrid);
+      dispatch(updateGrid(clearedGrid));
+      
+      // Spawn a new piece
+      dispatch(spawnNewPiece());
+      
+      // Check if game over
+      const gameOver = checkGameOver();
+      if (gameOver) {
+        dispatch(endGame());
+      }
+    }
+  }, [
+    isPlaying, 
+    isPaused, 
+    piecePosition, 
+    currentPiece, 
+    checkCollision,
+    dispatch,
+    grid,
+    clearLines,
+    checkGameOver
+  ]);
+
   const rotate = useCallback(() => {
     if (!isPlaying || isPaused) return;
     
@@ -276,13 +351,15 @@ export const useGameLogic = () => {
   useEffect(() => {
     if (!isPlaying || isPaused) return;
 
-    // Check if score has increased enough for level up
-    checkLevelUp();
-    
+    // Calculate game speed - this will update when level changes
     const gameSpeed = calculateGameSpeed();
+    
     const gameLoop = setInterval(() => {
       moveDown();
     }, gameSpeed);
+
+    // Log current level and speed for debugging
+    console.log(`Level: ${level}, Speed: ${gameSpeed}ms`);
 
     return () => {
       clearInterval(gameLoop);
@@ -290,8 +367,8 @@ export const useGameLogic = () => {
   }, [
     isPlaying,
     isPaused,
+    level, // Add level as a dependency to recalculate speed when level changes
     moveDown,
-    score,
     calculateGameSpeed,
     checkLevelUp
   ]);
@@ -302,5 +379,6 @@ export const useGameLogic = () => {
     moveDown,
     rotate,
     forceEndGame,
+    hardDrop,
   };
 }; 

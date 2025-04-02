@@ -11,8 +11,8 @@ interface GameState {
   piecePosition: { x: number; y: number };
   currentTetromino: Tetromino;
   nextTetromino: Tetromino;
-  finalScore: number;
-  finalLevel: number;
+  finalScore: number | undefined;
+  finalLevel: number | undefined;
 }
 
 // Creates a 20x10 grid filled with zeros
@@ -35,8 +35,8 @@ const initialState: GameState = {
   piecePosition: { x: 3, y: 0 },
   currentTetromino: initialRandomTetromino,
   nextTetromino: getRandomTetromino(),
-  finalScore: 0,
-  finalLevel: 0,
+  finalScore: undefined,
+  finalLevel: undefined,
 };
 
 const gameSlice = createSlice({
@@ -49,8 +49,8 @@ const gameSlice = createSlice({
       state.grid = createEmptyGrid();
       state.score = 0;
       state.level = 1;
-      state.finalScore = 0;
-      state.finalLevel = 0;
+      state.finalScore = undefined;
+      state.finalLevel = undefined;
       // Initialize with a random tetromino
       state.currentTetromino = state.nextTetromino;
       state.currentPiece = state.currentTetromino.shape;

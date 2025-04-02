@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
-import { startGame, pauseGame, resumeGame, endGame } from '../store/slices/gameSlice';
+import { startGame, pauseGame, resumeGame } from '../store/slices/gameSlice';
 import { useGameLogic } from '../hooks/useGameLogic';
 import GameBoard from './GameBoard';
 import styles from './Game.module.css';
@@ -63,7 +63,7 @@ const Game: React.FC = () => {
   } = useSelector(
     (state: RootState) => state.game
   );
-  const { moveLeft, moveRight, rotate, moveDown, forceEndGame } = useGameLogic();
+  const { moveLeft, moveRight, rotate, moveDown, forceEndGame, hardDrop } = useGameLogic();
 
   const handleStart = () => {
     dispatch(startGame());
@@ -103,11 +103,7 @@ const Game: React.FC = () => {
         case ' ':
           // Space to drop piece instantly
           event.preventDefault();
-          let dropCount = 0;
-          while (!isPaused && dropCount < 20) {
-            moveDown();
-            dropCount++;  // safety to prevent infinite loop
-          }
+          hardDrop();
           break;
         default:
           break;
@@ -134,7 +130,7 @@ const Game: React.FC = () => {
       // Re-enable scrolling
       document.body.style.overflow = '';
     };
-  }, [isPlaying, isPaused, moveLeft, moveRight, moveDown, rotate]);
+  }, [isPlaying, isPaused, moveLeft, moveRight, moveDown, rotate, hardDrop]);
 
   return (
     <div className={styles.game}>
@@ -195,18 +191,29 @@ const Game: React.FC = () => {
         </div>
       )}
 
-      {!isPlaying && (finalScore !== undefined && finalScore >= 0) && (
+      {!isPlaying && (
         <div className={styles.gameStatus}>
-          <h2 className={styles.gameOver}>Game Over</h2>
-          {finalScore === 0 ? (
-            <p className={styles.zeroScoreMessage}>Oops, something wrong?</p>
+          {finalScore === undefined ? (
+            <>
+              <h2 className={styles.welcomeTitle}>Welcome to CyberTetris!</h2>
+              <p className={styles.welcomeMessage}>Ready to start your cyber journey?</p>
+            </>
           ) : (
             <>
-              <p>Final Score: {finalScore}</p>
-              <p>Level Reached: {finalLevel}</p>
+              <h2 className={styles.gameOver}>Game Over</h2>
+              {finalScore === 0 ? (
+                <p className={styles.zeroScoreMessage}>Oops, something wrong?</p>
+              ) : (
+                <>
+                  <p>Final Score: {finalScore}</p>
+                  <p>Level Reached: {finalLevel}</p>
+                </>
+              )}
             </>
           )}
-          <button onClick={handleStart}>Play Again</button>
+          <button onClick={handleStart}>
+            {finalScore === undefined ? 'Start Game' : 'Play Again'}
+          </button>
         </div>
       )}
     </div>
