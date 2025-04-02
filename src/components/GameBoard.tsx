@@ -15,7 +15,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
   piecePosition, 
   currentTetromino 
 }) => {
-  const renderCell = (value: number, isCurrentPiece: boolean, color: string = '') => (
+  const renderCell = (value: number, isCurrentPiece: boolean) => (
     <div
       className={`${styles.cell} ${value ? styles.filled : ''} ${
         isCurrentPiece ? styles.currentPiece : ''
